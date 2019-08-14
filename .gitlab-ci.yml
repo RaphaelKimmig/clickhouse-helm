@@ -2,6 +2,7 @@ variables:
   NEXUS_USER: ""
   NEXUS_PASSWORD: ""
   NEXUS_CHARTS_URL: "https://nexus.corp.pushwoosh.com/repository/helm-charts/"
+  BITNAMI_REPO_URL: "https://charts.bitnami.com/bitnami"
 
 helm:package:
   image: $CI_REGISTRY/docker/alpine-ci
@@ -9,6 +10,7 @@ helm:package:
   script:
     - export CHART_NAME=$(awk '/name:/{print $NF; exit}' Chart.yaml)
     - printenv CHART_NAME
+    - helm repo add bitnami $BITNAMI_REPO_URL
     - export PKG=$(helm package --dependency-update --save=false --version=$CI_COMMIT_TAG . | cut -d":" -f2)
     - printenv PKG
     - curl -sSf -u $NEXUS_USER:$NEXUS_PASSWORD $NEXUS_CHARTS_URL --upload-file $PKG
