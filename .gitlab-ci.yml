@@ -2,7 +2,7 @@ variables:
   NEXUS_USER: ""
   NEXUS_PASSWORD: ""
   NEXUS_CHARTS_URL: "https://nexus.corp.pushwoosh.com/repository/helm-charts/"
-  BITNAMI_REPO_URL: "https://charts.bitnami.com/bitnami"
+  BITNAMI_REPO_URL: "https://charts.bitnami.com"
 
 helm:package:
   image: $CI_REGISTRY/docker/alpine-ci
