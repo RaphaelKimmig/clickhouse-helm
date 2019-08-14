@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: clickhouse
+spec:
+  replicas: {{ .Values.clickhouse.replicaCount }}
+  serviceName: clickhouse
+  {{ if .Values.clickhouse.usePersistentVolume }}
+  volumeClaimTemplates:
+    - metadata:
+        name: clickhouse-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.clickhouse.disk }}
+  {{ end }}
+  selector:
+    matchLabels:
+      app: clickhouse
+  template:
+    metadata:
+      labels:
+        app: clickhouse
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      volumes:
+        - name: clickhouse-config
+          configMap:
+            name: clickhouse-config
+        {{ if not .Values.clickhouse.usePersistentVolume }}
+        - name: clickhouse-data
+          emptyDir: {}
+        {{ end }}
+      containers:
+        - name: clickhouse-server
+          image: {{ .Values.clickhouse.image }}:{{ .Values.clickhouse.tag }}
+          imagePullPolicy: {{ .Values.clickhouse.pullPolicy }}
+          ports:
+            - name: native
+              containerPort: 9000
+              protocol: TCP
+            - name: http
+              containerPort: 8123
+              protocol: TCP
+            - name: interserver
+              containerPort: 9009
+              protocol: TCP
+          volumeMounts:
+            - name: clickhouse-data
+              mountPath: /var/lib/clickhouse
+            - name: clickhouse-config
+              mountPath: /etc/clickhouse-server/config.d/remote_servers.xml
+              subPath: remote_servers.xml
+            - name: clickhouse-config
+              mountPath:  /etc/clickhouse-server/users.d/admin.xml
+              subPath: users.xml
+            - name: clickhouse-config
+              mountPath: /etc/clickhouse-server/config.d/zookeeper.xml
+              subPath: zookeeper.xml
+          resources: {{ toYaml .Values.clickhouse.resources | nindent 12 }}
