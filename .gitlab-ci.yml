@@ -11,6 +11,7 @@ helm:package:
     - export CHART_NAME=$(awk '/name:/{print $NF; exit}' Chart.yaml)
     - printenv CHART_NAME
     - helm repo add bitnami $BITNAMI_REPO_URL
+    - helm repo list
     - export PKG=$(helm package --dependency-update --save=false --version=$CI_COMMIT_TAG . | cut -d":" -f2)
     - printenv PKG
     - curl -sSf -u $NEXUS_USER:$NEXUS_PASSWORD $NEXUS_CHARTS_URL --upload-file $PKG
