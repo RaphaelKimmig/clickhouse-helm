@@ -3,8 +3,8 @@
 Fully functioning replicated ClickHouse environment.  
   
 It can use build-in zookeeper or external one.  
-If you use just one replica zookeeper can be turned off at all by setting `zookeeper.enabled=false` and `externalZookeeper.enabled=false`.    
-Default user `default` . 
+If you use just one replica zookeeper can be turned off at all by setting `zookeeper.enabled=false` and `externalZookeeper.enabled=false`. If you want to use build-in zookeeper you need to set `clusterDomain` of your k8s.  
+Default user `default` with no password.  
 ## Run  
 
 ```bash
