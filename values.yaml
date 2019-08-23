@@ -1,5 +1,5 @@
 service:
-  annotations:
+  annotations: {}
 
 clickhouse:
   replicaCount: 1
