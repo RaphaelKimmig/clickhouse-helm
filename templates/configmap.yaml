@@ -64,7 +64,3 @@ data:
     </zookeeper>
     {{ end }}
     </yandex>
-  timezone.yml: |-
-    <yandex>
-      <timezone>UTC</timezone>
-    </yandex>
