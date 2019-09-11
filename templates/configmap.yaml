@@ -5,6 +5,10 @@ metadata:
   labels:
     app: clickhouse-config
 data:
+  system.xml: |-
+    <yandex>
+      <listen_host>::</listen_host>
+    </yandex>
   remote_servers.xml: |-
     <yandex>
       <remote_servers incl="clickhouse_remote_servers" replace="replace">
