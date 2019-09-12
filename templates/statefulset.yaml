@@ -27,9 +27,12 @@ spec:
         pod.alpha.kubernetes.io/initialized: "true"
     spec:
       volumes:
-        - name: clickhouse-config
+        - name: clickhouse-server-config
           configMap:
-            name: clickhouse-config
+            name: clickhouse-server-config
+        - name: clickhouse-user-config
+          configMap:
+            name: clickhouse-user-config
         {{ if not .Values.clickhouse.usePersistentVolume }}
         - name: clickhouse-data
           emptyDir: {}
@@ -54,6 +57,8 @@ spec:
           volumeMounts:
             - name: clickhouse-data
               mountPath: /var/lib/clickhouse
-            - name: clickhouse-config
+            - name: clickhouse-server-config
               mountPath: /etc/clickhouse-server/config.d
+            - name: clickhouse-user-config
+              mountPath: /etc/clickhouse-server/users.d
           resources: {{ toYaml .Values.clickhouse.resources | nindent 12 }}

@@ -1,17 +1,22 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: clickhouse-config
+  name: clickhouse-server-config
   labels:
-    app: clickhouse-config
+    app: clickhouse-server-config
 data:
   system.xml: |-
     <yandex>
       <listen_host>::</listen_host>
+      <compression replace="replace">
+        <case>
+          <method>zstd</method>
+        </case>
+      </compression>
     </yandex>
   remote_servers.xml: |-
     <yandex>
-      <remote_servers incl="clickhouse_remote_servers" replace="replace">
+      <remote_servers replace="replace">
         <clicks_cluster>
           <shard>
             <internal_replication>true</internal_replication>
@@ -26,30 +31,10 @@ data:
         </clicks_cluster>
       </remote_servers>
     </yandex>
-  users.xml: |-
-    <yandex>
-      <profiles>
-        <default>
-          <max_memory_usage>10000000000</max_memory_usage>
-          <use_uncompressed_cache>0</use_uncompressed_cache>
-          <load_balancing>random</load_balancing>
-        </default>
-      </profiles>
-      <users replace="replace">
-        <default>
-          <password>{{ .Values.clickhouse.password }}</password>
-          <profile>{{ .Values.clickhouse.user }}</profile>
-          <quota>default</quota>
-          <networks>
-            <ip>::/0</ip>
-          </networks>
-        </default>
-      </users>
-    </yandex>
   zookeeper.xml: |-
     <yandex>
     {{ if .Values.zookeeper.enabled }}
-      <zookeeper incl="zookeeper-servers" replace="replace">
+      <zookeeper replace="replace">
       {{range $i, $zk := until (atoi (printf "%d" (int64 .Values.zookeeper.replicaCount))) }}
         <node>
             <host>clickhouse-zookeeper-{{$i}}.clickhouse-zookeeper-headless</host>
@@ -58,7 +43,7 @@ data:
       {{end}}
       </zookeeper>
     {{ else if .Values.externalZookeeper.enabled }}
-    <zookeeper incl="zookeeper-servers" replace="replace">
+    <zookeeper replace="replace">
     {{ range .Values.externalZookeeper.servers }}
       <node>
           <host>{{ . }}</host>
