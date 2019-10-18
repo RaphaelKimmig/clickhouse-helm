@@ -8,11 +8,17 @@ data:
   system.xml: |-
     <yandex>
       <listen_host>::</listen_host>
+      <listen_host>0.0.0.0</listen_host>
+      <listen_try>1</listen_try>
       <compression replace="replace">
         <case>
           <method>zstd</method>
         </case>
       </compression>
+      <logger>
+        <level>trace</level>
+        <console>1</console>
+      </logger>
     </yandex>
   remote_servers.xml: |-
     <yandex>
